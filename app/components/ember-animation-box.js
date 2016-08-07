@@ -1,0 +1,1 @@
+export { default } from 'ember-animation-box/components/ember-animation-box';
