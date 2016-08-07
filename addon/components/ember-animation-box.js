@@ -4,7 +4,6 @@ import { task, timeout } from 'ember-concurrency';
 
 const {
   Component,
-  K,
   computed,
   get,
   getOwner,
@@ -24,8 +23,6 @@ export default Component.extend({
   hook: 'ember_animation_box',
 
   isInstant: false,
-  resolve: K,
-  transitionIn: K,
   transitions: [],
 
   _transitionQueue: [],
@@ -56,7 +53,9 @@ export default Component.extend({
   _mainQueueTask: task(function * () {
     yield get(this, '_queueTask').perform('main', get(this, '_transitionQueue'));
 
-    get(this, 'resolve')();
+    if (typeOf(this.attrs.resolve) === 'function') {
+      this.attrs.resolve();
+    }
   }).keepLatest(),
 
   _queueTask: task(function * (queueName, queue) {

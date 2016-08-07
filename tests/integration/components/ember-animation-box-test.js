@@ -104,7 +104,7 @@ test('delays are ignored if `isInstant`', function(assert) {
 });
 
 test('content can be cross faded in', function(assert) {
-  assert.expect(6);
+  assert.expect(8);
 
   const done = assert.async();
 
@@ -129,15 +129,41 @@ test('content can be cross faded in', function(assert) {
 
   assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 1, 'animation box is unaffected');
   assert.equal(this.$(hook('ember_animation_box')).children().length, 2, 'cloned box added');
+  assert.equal(this.$(hook('test_div')).length, 2, 'content cloned');
   assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().last().css('opacity')).toFixed(1), 0, 'active box opacity rising from 0');
   assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().first().css('opacity')).toFixed(1), 1, 'cloned box opacity falling from 0');
 
   later(() => {
     assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().last().css('opacity')).toFixed(1), 0.6, 'active box arrives at destination');
     assert.equal(this.$(hook('ember_animation_box')).children().length, 1, 'cloned box removed');
+    assert.equal(this.$(hook('test_div')).length, 1, 'cloned content removed');
 
     done();
   }, 60);
+});
+
+test('`transitionIn` is executed when crossFading', function(assert) {
+  assert.expect(1);
+
+  const crossFade = {
+    in: {
+      duration: 50,
+      effect: { opacity: 0.6 }
+    },
+    out: {
+      duration: 50,
+      effect: { opacity: 0 }
+    }
+  };
+
+  this.set('transitionIn', (transition) => assert.equal(transition, crossFade.in), 'it passes in the `in` transition');
+  this.set('transitions', [{ crossFade }]);
+
+  this.render(hbs`
+    {{#ember-animation-box transitions=transitions animationAdapter="velocity" transitionIn=(action transitionIn)}}
+      <div data-test={{hook "test_div"}}></div>
+    {{/ember-animation-box}}
+  `);
 });
 
 test('resolve is executed after last transition completes', function(assert) {
@@ -149,7 +175,7 @@ test('resolve is executed after last transition completes', function(assert) {
   this.set('resolve', () => assert.ok(hasResolved, 'it has resolved'));
   this.set('transitions', [{ effect: { opacity: 0.6 } }, { duration: 10 }, { effect: { opacity: 0.4 } }]);
 
-  this.render(hbs`{{ember-animation-box transitions=transitions resolve=resolve}}`);
+  this.render(hbs`{{ember-animation-box transitions=transitions resolve=(action resolve)}}`);
 
   later(() => {
     hasResolved = true;
