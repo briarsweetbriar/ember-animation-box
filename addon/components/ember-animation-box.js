@@ -91,7 +91,8 @@ export default Component.extend({
   },
 
   _animate(transition) {
-    const element = this.$(get(transition, 'element')).get(0);
+    const selector = get(transition, 'element');
+    const element = this.$(isPresent(selector) ? `.ember-animation-box-active-instance ${selector}` : undefined).get(0);
     const effect = get(transition, 'effect');
     const options = getProperties(transition, ...Object.keys(transition));
 

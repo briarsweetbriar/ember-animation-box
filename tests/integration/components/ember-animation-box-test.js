@@ -60,6 +60,21 @@ test('it queues multiple transition settings', function(assert) {
   assert.equal(this.$(hook('ember_animation_box')).css('opacity').toString().substring(0, 3), 0.4, 'subsequent transitions executed in order');
 });
 
+test('it can target a specific child element', function(assert) {
+  assert.expect(2);
+
+  this.set('transitions', [{ element: '.child', effect: { padding: '1290px' } }]);
+
+  this.render(hbs`
+    {{#ember-animation-box transitions=transitions}}
+      <div class='child'></div>
+    {{/ember-animation-box}}
+  `);
+
+  assert.equal(this.$(hook('ember_animation_box')).css('padding'), '0px', 'box was not transitioned');
+  assert.equal(this.$('.child').css('padding'), '1290px', 'child was transitioned');
+});
+
 test('transitions can be delayed', function(assert) {
   assert.expect(2);
 
