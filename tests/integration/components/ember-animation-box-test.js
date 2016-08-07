@@ -20,7 +20,7 @@ test('it uses initial transitions', function(assert) {
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
-  assert.equal(this.$(hook('ember_animation_box')).css('opacity').toString().substring(0, 3), 0.4, 'transition executed');
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'transition executed');
 });
 
 test('it uses added transitions', function(assert) {
@@ -32,7 +32,7 @@ test('it uses added transitions', function(assert) {
 
   this.set('transitions', [{ effect: { opacity: 0.4 } }]);
 
-  assert.equal(this.$(hook('ember_animation_box')).css('opacity').toString().substring(0, 3), 0.4, 'transition executed');
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'transition executed');
 });
 
 test('it processes the transitions sequentially', function(assert) {
@@ -42,7 +42,7 @@ test('it processes the transitions sequentially', function(assert) {
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
-  assert.equal(this.$(hook('ember_animation_box')).css('opacity').toString().substring(0, 3), 0.4, 'transitions executed in correct order');
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'transitions executed in correct order');
   assert.equal(this.$(hook('ember_animation_box')).css('padding'), '1290px', 'all transitions executed');
 });
 
@@ -57,7 +57,7 @@ test('it queues multiple transition settings', function(assert) {
   this.set('transitions', [{ effect: { opacity: 0.4 } }]);
 
   assert.equal(this.$(hook('ember_animation_box')).css('padding'), '1290px', 'initial transitions respected');
-  assert.equal(this.$(hook('ember_animation_box')).css('opacity').toString().substring(0, 3), 0.4, 'subsequent transitions executed in order');
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'subsequent transitions executed in order');
 });
 
 test('it can target a specific child element', function(assert) {
@@ -84,10 +84,10 @@ test('transitions can be delayed', function(assert) {
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
-  assert.equal(this.$(hook('ember_animation_box')).css('opacity').toString().substring(0, 3), 0.6, 'before delay');
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.6, 'before delay');
 
   later(() => {
-    assert.equal(this.$(hook('ember_animation_box')).css('opacity').toString().substring(0, 3), 0.4, 'after delay');
+    assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'after delay');
 
     done();
   }, 15);
@@ -100,7 +100,44 @@ test('delays are ignored if `isInstant`', function(assert) {
 
   this.render(hbs`{{ember-animation-box transitions=transitions isInstant=true}}`);
 
-  assert.equal(this.$(hook('ember_animation_box')).css('opacity').toString().substring(0, 3), 0.4, 'before delay');
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'before delay');
+});
+
+test('content can be cross faded in', function(assert) {
+  assert.expect(6);
+
+  const done = assert.async();
+
+  this.set('transitions', [{
+    crossFade: {
+      in: {
+        duration: 50,
+        effect: { opacity: 0.6 }
+      },
+      out: {
+        duration: 50,
+        effect: { opacity: 0 }
+      }
+    }
+  }]);
+
+  this.render(hbs`
+    {{#ember-animation-box transitions=transitions animationAdapter="velocity"}}
+      <div data-test={{hook "test_div"}}></div>
+    {{/ember-animation-box}}
+  `);
+
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 1, 'animation box is unaffected');
+  assert.equal(this.$(hook('ember_animation_box')).children().length, 2, 'cloned box added');
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().last().css('opacity')).toFixed(1), 0, 'active box opacity rising from 0');
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().first().css('opacity')).toFixed(1), 1, 'cloned box opacity falling from 0');
+
+  later(() => {
+    assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().last().css('opacity')).toFixed(1), 0.6, 'active box arrives at destination');
+    assert.equal(this.$(hook('ember_animation_box')).children().length, 1, 'cloned box removed');
+
+    done();
+  }, 60);
 });
 
 test('resolve is executed after last transition completes', function(assert) {
@@ -162,7 +199,7 @@ test('multiple queues can run concurrently', function(assert) {
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
-  assert.equal(this.$(hook('ember_animation_box')).css('opacity').toString().substring(0, 3), 0.4, 'main queue not delayed');
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'main queue not delayed');
   assert.equal(this.$(hook('ember_animation_box')).css('padding'), '123px', 'padding queue delayed');
 
   later(() => {

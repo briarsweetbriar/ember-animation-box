@@ -6,6 +6,10 @@ module.exports = function(defaults) {
   var app = new EmberAddon(defaults, {
     babel: {
       includePolyfill: true
+    },
+    velocityOptions: {
+      enabled: true,
+      ui: true
     }
   });
 

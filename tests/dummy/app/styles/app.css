@@ -1,0 +1,8 @@
+.fancy-text {
+  position: relative;
+  top: 60px;
+  left: 40px;
+  /*background-color: #777;*/
+  width: 100px;
+  height: 100px;
+}

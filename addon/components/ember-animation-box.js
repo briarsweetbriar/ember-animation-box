@@ -11,10 +11,13 @@ const {
   getProperties,
   isNone,
   isPresent,
-  set
+  set,
+  typeOf
 } = Ember;
 
 const { RSVP: { resolve } } = Ember;
+
+const activeInstanceClass = 'ember-animation-box-active-instance';
 
 export default Component.extend({
   layout,
@@ -22,6 +25,7 @@ export default Component.extend({
 
   isInstant: false,
   resolve: K,
+  transitionIn: K,
   transitions: [],
 
   _transitionQueue: [],
@@ -81,7 +85,9 @@ export default Component.extend({
   },
 
   _transitionSwitch(transition) {
-    if (isPresent(get(transition, 'effect'))) {
+    if (isPresent(get(transition, 'crossFade'))) {
+      return this._crossFade(transition);
+    } else if (isPresent(get(transition, 'effect'))) {
       return this._animate(transition);
     } else {
       return this._delay(transition);
@@ -92,10 +98,37 @@ export default Component.extend({
     return get(this, 'isInstant') ? resolve() : timeout(get(transition, 'duration'));
   },
 
+  _crossFade(transition) {
+    const $active = this.$(`.${activeInstanceClass}`);
+    const $clone = $active.clone().removeClass(activeInstanceClass);
+    const transitionIn = get(transition, 'crossFade.in');
+    const transitionOut = get(transition, 'crossFade.out');
+
+    $clone.css({ position: 'absolute' });
+    $active.before($clone);
+
+    this._performAnimation($clone.get(0), transitionOut).then(() => {
+      $clone.remove();
+    });
+
+    $active.css({ opacity: 0 });
+
+    if (typeOf(this.attrs.transitionIn) === 'function') {
+      this.attrs.transitionIn(transitionIn);
+    }
+
+    return this._performAnimation(this.$(`.${activeInstanceClass}`).get(0), transitionIn);
+  },
+
   _animate(transition) {
     const selector = get(transition, 'element');
-    const element = this.$(isPresent(selector) ? `.ember-animation-box-active-instance ${selector}` : undefined).get(0);
-    const effect = get(transition, 'effect');
+    const element = this.$(isPresent(selector) ? `.${activeInstanceClass} ${selector}` : undefined).get(0);
+
+    return this._performAnimation(element, transition);
+  },
+
+  _performAnimation(element, transition) {
+    const effect = get(transition, 'effect') || {};
     const options = getProperties(transition, ...Object.keys(transition));
 
     Reflect.deleteProperty(options, 'queue');
