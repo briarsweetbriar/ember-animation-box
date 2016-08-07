@@ -93,6 +93,16 @@ test('transitions can be delayed', function(assert) {
   }, 15);
 });
 
+test('delays are ignored if `isInstant`', function(assert) {
+  assert.expect(1);
+
+  this.set('transitions', [{ effect: { opacity: 0.6 } }, { duration: 10 }, { effect: { opacity: 0.4 } }]);
+
+  this.render(hbs`{{ember-animation-box transitions=transitions isInstant=true}}`);
+
+  assert.equal(this.$(hook('ember_animation_box')).css('opacity').toString().substring(0, 3), 0.4, 'before delay');
+});
+
 test('resolve is executed after last transition completes', function(assert) {
   assert.expect(1);
 

@@ -10,7 +10,8 @@ const {
   getOwner,
   getProperties,
   isNone,
-  isPresent
+  isPresent,
+  set
 } = Ember;
 
 const { RSVP: { resolve } } = Ember;
@@ -19,6 +20,7 @@ export default Component.extend({
   layout,
   hook: 'ember_animation_box',
 
+  isInstant: false,
   resolve: K,
   transitions: [],
 
@@ -87,7 +89,7 @@ export default Component.extend({
   },
 
   _delay(transition) {
-    return timeout(get(transition, 'duration'));
+    return get(this, 'isInstant') ? resolve() : timeout(get(transition, 'duration'));
   },
 
   _animate(transition) {
@@ -98,6 +100,10 @@ export default Component.extend({
 
     Reflect.deleteProperty(options, 'queue');
     Reflect.deleteProperty(options, 'element');
+
+    if (get(this, 'isInstant')) {
+      set(options, 'duration', 0);
+    }
 
     return get(this, 'animator').animate(element, effect, options);
   }
