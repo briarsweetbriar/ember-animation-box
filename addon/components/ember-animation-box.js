@@ -116,7 +116,7 @@ export default Component.extend({
       this.attrs.transitionIn(transitionIn);
     }
 
-    return this._performAnimation(this.$(`.${activeInstanceClass}`).get(0), transitionIn);
+    return this._performAnimation($active.get(0), transitionIn);
   },
 
   _animate(transition) {
