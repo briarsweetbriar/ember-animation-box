@@ -98,7 +98,7 @@ export default Component.extend({
   },
 
   _crossFade(transition) {
-    const $active = this.$(`.${activeInstanceClass}`);
+    const $active = this.$().children(`.${activeInstanceClass}`);
     const $clone = $active.clone().removeClass(activeInstanceClass);
     const transitionIn = get(transition, 'crossFade.in');
     const transitionOut = get(transition, 'crossFade.out');
