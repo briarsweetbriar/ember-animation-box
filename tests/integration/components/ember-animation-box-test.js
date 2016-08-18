@@ -204,23 +204,27 @@ test('transitions are deleted after entering queue', function(assert) {
 
   const done = assert.async();
 
-  this.set('transitions', Ember.A([
+  const transitions = Ember.A([
     { effect: { padding: '123px' } },
     { duration: 10 },
     { effect: { padding: '1290px' } }
-  ]));
+  ]);
+
+  this.set('transitions', transitions);
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
   later(() => {
     assert.equal(this.$(hook('ember_animation_box')).css('padding'), '1290px', 'padding queue completes');
 
-    this.set('transitions', [{ effect: { padding: '321px' } }]);
+    transitions.pushObject({ effect: { padding: '321px' } });
+  }, 25);
 
+  later(() => {
     assert.equal(this.$(hook('ember_animation_box')).css('padding'), '321px', 'old transitions not run again');
 
     done();
-  }, 15);
+  }, 50);
 });
 
 test('multiple queues can run concurrently', function(assert) {
