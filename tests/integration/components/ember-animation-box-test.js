@@ -192,7 +192,7 @@ test('resolve is executed after last transition completes', function(assert) {
 
   later(() => {
     hasResolved = true;
-  }, 10);
+  }, 8);
 
   later(() => {
     done();
