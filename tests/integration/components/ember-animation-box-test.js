@@ -67,7 +67,7 @@ test('it queues multiple transition settings', function(assert) {
       assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'subsequent transitions executed in order');
 
       done();
-    });
+    }, 25);
   });
 });
 
@@ -101,7 +101,7 @@ test('transitions can be delayed', function(assert) {
     assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'after delay');
 
     done();
-  }, 15);
+  }, 25);
 });
 
 test('delays are ignored if `isInstant`', function(assert) {
@@ -150,7 +150,7 @@ test('content can be cross faded in', function(assert) {
     assert.equal(this.$(hook('test_div')).length, 1, 'cloned content removed');
 
     done();
-  }, 60);
+  }, 75);
 });
 
 test('`in` callback is executed when crossFading', function(assert) {
@@ -196,7 +196,7 @@ test('resolve is executed after last transition completes', function(assert) {
 
   later(() => {
     done();
-  }, 15);
+  }, 25);
 });
 
 test('transitions are deleted after entering queue', function(assert) {
@@ -249,7 +249,7 @@ test('multiple queues can run concurrently', function(assert) {
     assert.equal(this.$(hook('ember_animation_box')).css('padding'), '1290px', 'padding queue completes');
 
     done();
-  }, 15);
+  }, 25);
 });
 
 test('last transition can be a custom queue', function(assert) {
@@ -271,5 +271,5 @@ test('last transition can be a custom queue', function(assert) {
     assert.equal(this.$(hook('ember_animation_box')).css('padding'), '1290px', 'padding queue completes');
 
     done();
-  }, 15);
+  }, 25);
 });
