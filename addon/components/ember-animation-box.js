@@ -10,6 +10,8 @@ const {
   getProperties,
   isNone,
   isPresent,
+  observer,
+  on,
   set,
   typeOf
 } = Ember;
@@ -35,19 +37,18 @@ export default Component.extend({
     }
   }),
 
-  didReceiveAttrs(...args) {
-    this._super(...args);
+  loadAndPerformQueue: on('init', observer('transitions.[]', function() {
     this._queueTransitions();
 
     get(this, '_mainQueueTask').perform();
-  },
+  })),
 
   _queueTransitions() {
     const queue = get(this, '_transitionQueue');
+    const transitions = get(this, 'transitions');
 
-    get(this, 'transitions').forEach((transition) => queue.push(transition));
-
-    Reflect.deleteProperty(this, 'transitions');
+    transitions.forEach((transition) => queue.push(transition));
+    transitions.length = 0;
   },
 
   _mainQueueTask: task(function * () {

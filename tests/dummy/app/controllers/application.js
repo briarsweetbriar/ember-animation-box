@@ -3,7 +3,7 @@ import Ember from 'ember';
 export default Ember.Controller.extend({
   text: 'I am the original text. . . .',
 
-  transitions: [{
+  transitions: Ember.A([{
     duration: 500,
     effect: {
       translateX: '100px'
@@ -61,7 +61,7 @@ export default Ember.Controller.extend({
     effect: {
       translateY: '100px'
     }
-  }],
+  }]),
 
   actions: {
     transitionIn(transition) {

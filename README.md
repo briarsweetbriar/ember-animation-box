@@ -26,7 +26,7 @@ The `animationAdapter` let's you specify which animation library this box should
 
 ### `transitions`
 
-The `transitions` param should be an array of transition objects. Currently, `ember-animation-box` supports three types of transitions:
+The `transitions` param should be an Ember.A of transition objects. Currently, `ember-animation-box` supports three types of transitions:
 
 #### Standard Transitions
 

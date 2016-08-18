@@ -3,7 +3,8 @@ import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import { hook, initialize as initializeHook } from 'ember-hook';
 
-const { run: { later } } = Ember;
+const { run } = Ember;
+const { later } = run;
 
 moduleForComponent('ember-animation-box', 'Integration | Component | ember animation box', {
   integration: true,
@@ -16,7 +17,7 @@ moduleForComponent('ember-animation-box', 'Integration | Component | ember anima
 test('it uses initial transitions', function(assert) {
   assert.expect(1);
 
-  this.set('transitions', [{ effect: { opacity: 0.4 } }]);
+  this.set('transitions', Ember.A([{ effect: { opacity: 0.4 } }]));
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
@@ -30,7 +31,7 @@ test('it uses added transitions', function(assert) {
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
-  this.set('transitions', [{ effect: { opacity: 0.4 } }]);
+  this.set('transitions', Ember.A([{ effect: { opacity: 0.4 } }]));
 
   assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'transition executed');
 });
@@ -38,7 +39,7 @@ test('it uses added transitions', function(assert) {
 test('it processes the transitions sequentially', function(assert) {
   assert.expect(2);
 
-  this.set('transitions', [{ effect: { opacity: 0.6 } }, { effect: { padding: '1290px' } }, { effect: { opacity: 0.4 } }]);
+  this.set('transitions', Ember.A([{ effect: { opacity: 0.6 } }, { effect: { padding: '1290px' } }, { effect: { opacity: 0.4 } }]));
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
@@ -49,21 +50,31 @@ test('it processes the transitions sequentially', function(assert) {
 test('it queues multiple transition settings', function(assert) {
   assert.expect(2);
 
-  this.set('transitions', [{ effect: { padding: '1290px' } }]);
+  const done = assert.async();
 
-  this.render(hbs`{{ember-animation-box transitions=transitions}}`);
+  run(() => {
+    const transitions = Ember.A([{ effect: { padding: '1290px' } }]);
 
-  this.set('transitions', [{ effect: { opacity: 0.6 } }]);
-  this.set('transitions', [{ effect: { opacity: 0.4 } }]);
+    this.set('transitions', transitions);
 
-  assert.equal(this.$(hook('ember_animation_box')).css('padding'), '1290px', 'initial transitions respected');
-  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'subsequent transitions executed in order');
+    this.render(hbs`{{ember-animation-box transitions=transitions}}`);
+
+    transitions.pushObject({ effect: { opacity: 0.6 } });
+    transitions.pushObject({ effect: { opacity: 0.4 } });
+
+    later(() => {
+      assert.equal(this.$(hook('ember_animation_box')).css('padding'), '1290px', 'initial transitions respected');
+      assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'subsequent transitions executed in order');
+
+      done();
+    });
+  });
 });
 
 test('it can target a specific child element', function(assert) {
   assert.expect(2);
 
-  this.set('transitions', [{ element: '.child', effect: { padding: '1290px' } }]);
+  this.set('transitions', Ember.A([{ element: '.child', effect: { padding: '1290px' } }]));
 
   this.render(hbs`
     {{#ember-animation-box transitions=transitions}}
@@ -80,7 +91,7 @@ test('transitions can be delayed', function(assert) {
 
   const done = assert.async();
 
-  this.set('transitions', [{ effect: { opacity: 0.6 } }, { duration: 10 }, { effect: { opacity: 0.4 } }]);
+  this.set('transitions', Ember.A([{ effect: { opacity: 0.6 } }, { duration: 10 }, { effect: { opacity: 0.4 } }]));
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
@@ -96,7 +107,7 @@ test('transitions can be delayed', function(assert) {
 test('delays are ignored if `isInstant`', function(assert) {
   assert.expect(1);
 
-  this.set('transitions', [{ effect: { opacity: 0.6 } }, { duration: 10 }, { effect: { opacity: 0.4 } }]);
+  this.set('transitions', Ember.A([{ effect: { opacity: 0.6 } }, { duration: 10 }, { effect: { opacity: 0.4 } }]));
 
   this.render(hbs`{{ember-animation-box transitions=transitions isInstant=true}}`);
 
@@ -108,7 +119,7 @@ test('content can be cross faded in', function(assert) {
 
   const done = assert.async();
 
-  this.set('transitions', [{
+  this.set('transitions', Ember.A([{
     crossFade: {
       in: {
         duration: 50,
@@ -119,7 +130,7 @@ test('content can be cross faded in', function(assert) {
         effect: { opacity: 0 }
       }
     }
-  }]);
+  }]));
 
   this.render(hbs`
     {{#ember-animation-box transitions=transitions animationAdapter="velocity"}}
@@ -157,7 +168,7 @@ test('`transitionIn` is executed when crossFading', function(assert) {
   };
 
   this.set('transitionIn', (transition) => assert.equal(transition, crossFade.in), 'it passes in the `in` transition');
-  this.set('transitions', [{ crossFade }]);
+  this.set('transitions', Ember.A([{ crossFade }]));
 
   this.render(hbs`
     {{#ember-animation-box transitions=transitions animationAdapter="velocity" transitionIn=(action transitionIn)}}
@@ -173,7 +184,7 @@ test('resolve is executed after last transition completes', function(assert) {
   let hasResolved = false;
 
   this.set('resolve', () => assert.ok(hasResolved, 'it has resolved'));
-  this.set('transitions', [{ effect: { opacity: 0.6 } }, { duration: 10 }, { effect: { opacity: 0.4 } }]);
+  this.set('transitions', Ember.A([{ effect: { opacity: 0.6 } }, { duration: 10 }, { effect: { opacity: 0.4 } }]));
 
   this.render(hbs`{{ember-animation-box transitions=transitions resolve=(action resolve)}}`);
 
@@ -191,11 +202,11 @@ test('transitions are deleted after entering queue', function(assert) {
 
   const done = assert.async();
 
-  this.set('transitions', [
+  this.set('transitions', Ember.A([
     { effect: { padding: '123px' } },
     { duration: 10 },
     { effect: { padding: '1290px' } }
-  ]);
+  ]));
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
@@ -215,13 +226,13 @@ test('multiple queues can run concurrently', function(assert) {
 
   const done = assert.async();
 
-  this.set('transitions', [
+  this.set('transitions', Ember.A([
     { effect: { opacity: 0.6 } },
     { queue: 'padding', effect: { padding: '123px' } },
     { queue: 'padding', duration: 10 },
     { queue: 'padding', effect: { padding: '1290px' } },
     { effect: { opacity: 0.4 } }
-  ]);
+  ]));
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
@@ -240,11 +251,11 @@ test('last transition can be a custom queue', function(assert) {
 
   const done = assert.async();
 
-  this.set('transitions', [
+  this.set('transitions', Ember.A([
     { queue: 'padding', effect: { padding: '123px' } },
     { queue: 'padding', duration: 10 },
     { queue: 'padding', effect: { padding: '1290px' } }
-  ]);
+  ]));
 
   this.render(hbs`{{ember-animation-box transitions=transitions}}`);
 
