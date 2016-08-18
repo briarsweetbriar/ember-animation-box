@@ -49,6 +49,9 @@ The standard transition contains an `effect` object, which has an array of css a
 {
   crossFade: {
     in: {
+      cb() {
+        . . . .
+      }
       duration: 500,
       effect: {
         opacity: 1
@@ -64,27 +67,7 @@ The standard transition contains an `effect` object, which has an array of css a
 }
 ```
 
-If the `transition` contains a `crossFade` object, then it'll clone the current content of your animation box and perform the `out` transition on it. It'll also trigger the `transitionIn` action (prompting you to change the content of your box), and then execute the `in` transition. To get this working, you'll need to pass in an additional parameter to the box:
-
-```hbs
-{{#ember-animation-box transitions=transitions animationAdapter="velocity" transitionIn=(action "changeContent")}}
-  {{text}}
-{{/ember-animation-box}}
-```
-
-```js
-export default Ember.Component.extend({
-  text: 'Initial text.',
-
-  actions: {
-    changeContent(transition) { // `transition` is the `in` transtion
-      const newText = transtion.text; // you can set whatever arbitrary value on the `in` object that you need
-
-      this.set('text', newText);
-    }
-  }
-})
-```
+If the `transition` contains a `crossFade` object, then it'll clone the current content of your animation box and perform the `out` transition on it. It'll also executes `cb` before performing the `in` animation, which is the ideal time to change the content of your animation box so that the new content appears to transition in.
 
 #### Delay
 

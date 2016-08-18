@@ -113,8 +113,8 @@ export default Component.extend({
 
     $active.css({ opacity: 0 });
 
-    if (typeOf(this.attrs.transitionIn) === 'function') {
-      this.attrs.transitionIn(transitionIn);
+    if (typeOf(transitionIn.cb) === 'function') {
+      transitionIn.cb();
     }
 
     return this._performAnimation($active.get(0), transitionIn);
