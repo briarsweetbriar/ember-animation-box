@@ -157,10 +157,10 @@ test('`in` callback is executed when crossFading', function(assert) {
   assert.expect(1);
 
   const crossFade = {
+    cb() {
+      assert.ok(true, 'it executes the callback');
+    },
     in: {
-      cb() {
-        assert.ok(true, 'it executes the callback');
-      },
       duration: 50,
       effect: { opacity: 0.6 }
     },

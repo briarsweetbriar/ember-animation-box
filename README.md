@@ -48,10 +48,10 @@ The standard transition contains an `effect` object, which has an array of css a
 ```js
 {
   crossFade: {
+    cb() {
+      . . . .
+    },
     in: {
-      cb() {
-        . . . .
-      }
       duration: 500,
       effect: {
         opacity: 1
