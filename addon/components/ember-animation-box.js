@@ -99,11 +99,11 @@ export default Component.extend({
   },
 
   _crossFade(transition) {
-    const crossFade = get(transition, 'crossFade');
     const $active = this.$().children(`.${activeInstanceClass}`);
     const $clone = $active.clone().removeClass(activeInstanceClass);
-    const transitionIn = get(crossFade, 'in');
-    const transitionOut = get(crossFade, 'out');
+    const cb = get(transition, 'crossFade.cb');
+    const transitionIn = get(transition, 'crossFade.in');
+    const transitionOut = get(transition, 'crossFade.out');
 
     $clone.css({ position: 'absolute' });
     $active.before($clone);
@@ -114,8 +114,8 @@ export default Component.extend({
 
     $active.css({ opacity: 0 });
 
-    if (typeOf(this.attrs.onCrossFade) === 'function') {
-      this.attrs.onCrossFade(crossFade);
+    if (typeOf(cb) === 'function') {
+      cb();
     }
 
     return this._performAnimation($active.get(0), transitionIn);
