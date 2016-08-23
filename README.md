@@ -48,9 +48,6 @@ The standard transition contains an `effect` object, which has an array of css a
 ```js
 {
   crossFade: {
-    cb() {
-      . . . .
-    },
     in: {
       duration: 500,
       effect: {
@@ -67,7 +64,23 @@ The standard transition contains an `effect` object, which has an array of css a
 }
 ```
 
-If the `transition` contains a `crossFade` object, then it'll clone the current content of your animation box and perform the `out` transition on it. It'll also executes `cb` before performing the `in` animation, which is the ideal time to change the content of your animation box so that the new content appears to transition in.
+If the `transition` contains a `crossFade` object, then it'll clone the current content of your animation box and perform the `out` transition on it. It'll also trigger the `onCrossFade` action before performing the `in` animation, which is the ideal time to change the content of your animation box so that the new content appears to transition in.
+
+```hbs
+{{#ember-animation-box onCrossFade=(action "changeContent")}}
+  {{content}}
+{{/ember-animation-box}}
+```
+
+```js
+actions: {
+  changeContent(transition) {
+    // the crossFade transition is passed in as the sole argument to the action;
+    // you can set whatever information you need into the object
+    this.set('content', transition.newContent);
+  }
+}
+```
 
 #### Delay
 

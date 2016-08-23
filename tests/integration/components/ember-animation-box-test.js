@@ -153,13 +153,10 @@ test('content can be cross faded in', function(assert) {
   }, 75);
 });
 
-test('`in` callback is executed when crossFading', function(assert) {
+test('when cross fading, optionally calls the `crossFade` action', function(assert) {
   assert.expect(1);
 
   const crossFade = {
-    cb() {
-      assert.ok(true, 'it executes the callback');
-    },
     in: {
       duration: 50,
       effect: { opacity: 0.6 }
@@ -172,8 +169,12 @@ test('`in` callback is executed when crossFading', function(assert) {
 
   this.set('transitions', Ember.A([{ crossFade }]));
 
+  this.set('crossFade', (arg) => {
+    assert.equal(arg, crossFade, 'passes in the transition');
+  });
+
   this.render(hbs`
-    {{#ember-animation-box transitions=transitions animationAdapter="velocity"}}
+    {{#ember-animation-box transitions=transitions animationAdapter="velocity" onCrossFade=(action crossFade)}}
       <div data-test={{hook "test_div"}}></div>
     {{/ember-animation-box}}
   `);
