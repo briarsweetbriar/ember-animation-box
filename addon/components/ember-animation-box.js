@@ -54,8 +54,8 @@ export default Component.extend({
   _mainQueueTask: task(function * () {
     yield get(this, '_queueTask').perform('main', get(this, '_transitionQueue'));
 
-    if (typeOf(this.attrs.resolve) === 'function') {
-      this.attrs.resolve();
+    if (typeOf(this.attrs.didCompleteQueue) === 'function') {
+      this.attrs.didCompleteQueue();
     }
   }).keepLatest(),
 

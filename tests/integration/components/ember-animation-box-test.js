@@ -179,20 +179,20 @@ test('`in` callback is executed when crossFading', function(assert) {
   `);
 });
 
-test('resolve is executed after last transition completes', function(assert) {
+test('didCompleteQueue is executed after last transition completes', function(assert) {
   assert.expect(1);
 
   const done = assert.async();
-  let hasResolved = false;
+  let hasCompleted = false;
 
-  this.set('resolve', () => assert.ok(hasResolved, 'it has resolved'));
+  this.set('didCompleteQueue', () => assert.ok(hasCompleted, 'it has completed the queue'));
   this.set('transitions', Ember.A([{ effect: { opacity: 0.6 } }, { duration: 10 }, { effect: { opacity: 0.4 } }]));
 
-  this.render(hbs`{{ember-animation-box transitions=transitions resolve=(action resolve)}}`);
+  this.render(hbs`{{ember-animation-box transitions=transitions didCompleteQueue=(action didCompleteQueue)}}`);
 
   later(() => {
-    hasResolved = true;
-  }, 8);
+    hasCompleted = true;
+  }, 9);
 
   later(() => {
     done();
