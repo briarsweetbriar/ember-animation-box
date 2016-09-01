@@ -52,10 +52,14 @@ export default Component.extend({
   },
 
   _mainQueueTask: task(function * () {
-    yield get(this, '_queueTask').perform('main', get(this, '_transitionQueue'));
+    const queue = get(this, '_transitionQueue');
 
-    if (typeOf(this.attrs.didCompleteQueue) === 'function') {
-      this.attrs.didCompleteQueue();
+    if (queue.length > 0) {
+      yield get(this, '_queueTask').perform('main', queue);
+
+      if (typeOf(this.attrs.didCompleteQueue) === 'function') {
+        this.attrs.didCompleteQueue();
+      }
     }
   }).keepLatest(),
 
