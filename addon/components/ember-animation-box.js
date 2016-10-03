@@ -112,7 +112,7 @@ export default Component.extend({
     const transitionIn = get(transition, 'crossFade.in');
     const transitionOut = get(transition, 'crossFade.out');
 
-    $clone.css({ position: 'absolute' });
+    $clone.css({ position: 'absolute', top: 0, left: 0 });
     $active.after($clone);
 
     this._performAnimation($clone.get(0), transitionOut).then(() => {
