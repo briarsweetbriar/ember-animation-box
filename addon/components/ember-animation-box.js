@@ -27,7 +27,6 @@ export default Component.extend({
   isInstant: false,
   transitions: [],
 
-  _transitionsIndex: 0,
   _transitionQueue: computed(() => Ember.A()),
 
   animator: computed('animationAdapter', {
@@ -46,12 +45,11 @@ export default Component.extend({
 
   _queueTransitions() {
     const queue = get(this, '_transitionQueue');
-    const index = get(this, '_transitionsIndex');
     const transitions = get(this, 'transitions');
 
-    queue.pushObjects(transitions.slice(index));
+    queue.pushObjects(transitions);
 
-    set(this, '_transitionsIndex', transitions.length);
+    transitions.length = 0;
   },
 
   _mainQueueTask: task(function * () {
