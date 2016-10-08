@@ -3,7 +3,7 @@ import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import { hook, initialize as initializeHook } from 'ember-hook';
 
-const { run } = Ember;
+const { run, typeOf } = Ember;
 const { later } = run;
 
 moduleForComponent('ember-animation-box', 'Integration | Component | ember animation box', {
@@ -151,6 +151,27 @@ test('content can be cross faded in', function(assert) {
 
     done();
   }, 75);
+});
+
+test('`externalAction` called when external', function(assert) {
+  assert.expect(2);
+
+  const external = {
+    foo: 'bar'
+  };
+
+  this.set('externalAction', (transition, resolve) => {
+    assert.equal(transition, external, 'passes transition');
+    assert.equal(typeOf(resolve), 'function', 'passes resolve');
+  });
+
+  this.set('transitions', Ember.A([{ external }]));
+
+  this.render(hbs`
+    {{#ember-animation-box transitions=transitions animationAdapter="velocity" externalAction=(action externalAction)}}
+      <div data-test={{hook "test_div"}}></div>
+    {{/ember-animation-box}}
+  `);
 });
 
 test('`in` callback is executed when crossFading', function(assert) {

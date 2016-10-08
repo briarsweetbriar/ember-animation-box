@@ -16,7 +16,13 @@ const {
   typeOf
 } = Ember;
 
-const { RSVP: { resolve } } = Ember;
+const {
+  RSVP: {
+    Promise,
+    all,
+    resolve
+  }
+} = Ember;
 
 const activeInstanceClass = 'ember-animation-box-active-instance';
 
@@ -94,6 +100,8 @@ export default Component.extend({
       return this._crossFade(transition);
     } else if (isPresent(get(transition, 'effect'))) {
       return this._animate(transition);
+    } else if (isPresent(get(transition, 'external'))) {
+      return this._resolveExternally(transition);
     } else {
       return this._delay(transition);
     }
@@ -101,6 +109,12 @@ export default Component.extend({
 
   _delay(transition) {
     return get(this, 'isInstant') ? resolve() : timeout(get(transition, 'duration'));
+  },
+
+  _resolveExternally(transition) {
+    return new Promise((resolve) => {
+      this.attrs.externalAction(get(transition, 'external'), resolve);
+    });
   },
 
   _crossFade(transition) {
@@ -113,7 +127,7 @@ export default Component.extend({
     $clone.css({ position: 'absolute', top: 0, left: 0 });
     $active.after($clone);
 
-    this._performAnimation($clone.get(0), transitionOut).then(() => {
+    const outPromise = this._performAnimation($clone.get(0), transitionOut).then(() => {
       $clone.remove();
     });
 
@@ -123,7 +137,9 @@ export default Component.extend({
       cb();
     }
 
-    return this._performAnimation($active.get(0), transitionIn);
+    const inPromise = this._performAnimation($active.get(0), transitionIn);
+
+    return all([outPromise, inPromise]);
   },
 
   _animate(transition) {
