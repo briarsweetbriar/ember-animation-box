@@ -141,11 +141,11 @@ test('content can be cross faded in', function(assert) {
   assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 1, 'animation box is unaffected');
   assert.equal(this.$(hook('ember_animation_box')).children().length, 2, 'cloned box added');
   assert.equal(this.$(hook('test_div')).length, 2, 'content cloned');
-  assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().first().css('opacity')).toFixed(1), 0, 'active box opacity rising from 0');
-  assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().last().css('opacity')).toFixed(1), 1, 'cloned box opacity falling from 0');
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().last().css('opacity')).toFixed(1), 0, 'active box opacity rising from 0');
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().first().css('opacity')).toFixed(1), 1, 'cloned box opacity falling from 0');
 
   later(() => {
-    assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().first().css('opacity')).toFixed(1), 0.6, 'active box arrives at destination');
+    assert.equal(parseFloat(this.$(hook('ember_animation_box')).children().last().css('opacity')).toFixed(1), 0.6, 'active box arrives at destination');
     assert.equal(this.$(hook('ember_animation_box')).children().length, 1, 'cloned box removed');
     assert.equal(this.$(hook('test_div')).length, 1, 'cloned content removed');
 
