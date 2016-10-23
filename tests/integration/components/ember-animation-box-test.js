@@ -71,6 +71,64 @@ test('it queues multiple transition settings', function(assert) {
   });
 });
 
+test('it can receive media queries', function(assert) {
+  assert.expect(1);
+
+  this.set('transitions', []);
+
+  this.render(hbs`{{ember-animation-box transitions=transitions}}`);
+
+  this.$(hook('ember_animation_box')).css('width', '200px');
+
+  this.set('transitions', Ember.A([{ effect: {
+    '@media (max-width: 100px)': { opacity: 0.1 },
+    '@media (max-width: 400px)': { opacity: 0.4 },
+    '@media (max-width: 50px)': { opacity: 0.8 }
+  } }]));
+
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'transition executed');
+});
+
+test('it can receive multiple media queries', function(assert) {
+  assert.expect(1);
+
+  this.set('transitions', []);
+
+  this.render(hbs`{{ember-animation-box transitions=transitions}}`);
+
+  this.$(hook('ember_animation_box')).css('width', '200px');
+  this.$(hook('ember_animation_box')).css('height', '200px');
+
+  this.set('transitions', Ember.A([{ effect: {
+    '@media (max-width: 100px) and (max-height: 400px)': { opacity: 0.1 },
+    '@media (max-width: 400px) and (max-height: 400px)': { opacity: 0.4 },
+    '@media (max-width: 400px) and (max-height: 100px)': { opacity: 0.8 }
+  } }]));
+
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'transition executed');
+});
+
+test('multiple media queries can apply', function(assert) {
+  assert.expect(3);
+
+  this.set('transitions', []);
+
+  this.render(hbs`{{ember-animation-box transitions=transitions}}`);
+
+  this.$(hook('ember_animation_box')).css('width', '200px');
+
+  this.set('transitions', Ember.A([{ effect: {
+    '@media (max-width: 100px)': { opacity: 0.1 },
+    '@media (max-width: 400px)': { opacity: 0.4 },
+    '@media (max-width: 500px)': { padding: '1234px' },
+    margin: '5678px'
+  } }]));
+
+  assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'first media executed');
+  assert.equal(this.$(hook('ember_animation_box')).css('padding'), '1234px', 'second media executed');
+  assert.equal(this.$(hook('ember_animation_box')).css('margin'), '5678px', 'default executed');
+});
+
 test('it can target a specific child element', function(assert) {
   assert.expect(2);
 
@@ -153,27 +211,6 @@ test('content can be cross faded in', function(assert) {
   }, 75);
 });
 
-test('`externalAction` called when external', function(assert) {
-  assert.expect(2);
-
-  const external = {
-    foo: 'bar'
-  };
-
-  this.set('externalAction', (transition, resolve) => {
-    assert.equal(transition, external, 'passes transition');
-    assert.equal(typeOf(resolve), 'function', 'passes resolve');
-  });
-
-  this.set('transitions', Ember.A([{ external }]));
-
-  this.render(hbs`
-    {{#ember-animation-box transitions=transitions animationAdapter="velocity" externalAction=(action externalAction)}}
-      <div data-test={{hook "test_div"}}></div>
-    {{/ember-animation-box}}
-  `);
-});
-
 test('`in` callback is executed when crossFading', function(assert) {
   assert.expect(1);
 
@@ -195,6 +232,27 @@ test('`in` callback is executed when crossFading', function(assert) {
 
   this.render(hbs`
     {{#ember-animation-box transitions=transitions animationAdapter="velocity"}}
+      <div data-test={{hook "test_div"}}></div>
+    {{/ember-animation-box}}
+  `);
+});
+
+test('`externalAction` called when external', function(assert) {
+  assert.expect(2);
+
+  const external = {
+    foo: 'bar'
+  };
+
+  this.set('externalAction', (transition, resolve) => {
+    assert.equal(transition, external, 'passes transition');
+    assert.equal(typeOf(resolve), 'function', 'passes resolve');
+  });
+
+  this.set('transitions', Ember.A([{ external }]));
+
+  this.render(hbs`
+    {{#ember-animation-box transitions=transitions animationAdapter="velocity" externalAction=(action externalAction)}}
       <div data-test={{hook "test_div"}}></div>
     {{/ember-animation-box}}
   `);

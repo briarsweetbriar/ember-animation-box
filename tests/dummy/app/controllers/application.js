@@ -13,9 +13,12 @@ export default Controller.extend({
     const _this = this;
 
     return Ember.A([{
-      duration: 500,
+      duration: 5000,
       effect: {
-        translateX: '100px'
+        '@media (min-width: 500px)': {
+          translateX: '100px'
+        },
+        translateY: '100px'
       }
     }, {
       crossFade: {

@@ -4,6 +4,7 @@ import { task, timeout } from 'ember-concurrency';
 
 const {
   Component,
+  assign,
   computed,
   get,
   getOwner,
@@ -153,7 +154,7 @@ export default Component.extend({
   },
 
   _performAnimation(element, transition) {
-    const effect = get(transition, 'effect') || {};
+    const effect = this._generateEffect(get(transition, 'effect') || {});
     const options = getProperties(transition, ...Object.keys(transition));
 
     Reflect.deleteProperty(options, 'queue');
@@ -164,5 +165,49 @@ export default Component.extend({
     }
 
     return get(this, 'animator').animate(element, effect, options);
+  },
+
+  _generateEffect(container) {
+    return Object.keys(container).reduce((accumulator, key) => {
+      if (key.includes('@media')) {
+        if (this._mediaQueryIsValid(key)) {
+          assign(accumulator, get(container, key));
+        }
+      } else {
+        accumulator[key] = container[key];
+      }
+
+      return accumulator;
+    }, {});
+  },
+
+  _mediaQueryIsValid(string) {
+    return string.match(/\(([^)]+?)\)/g).every((query) => {
+      const [property, value] = query.substring(1, query.length - 1).split(':');
+
+      switch (property) {
+        case 'min-height': return this._hasMinHeight(value);
+        case 'max-height': return this._hasMaxHeight(value);
+        case 'min-width': return this._hasMinWidth(value);
+        case 'max-width': return this._hasMaxWidth(value);
+        default: return false;
+      }
+    });
+  },
+
+  _hasMinHeight(value) {
+    return this.element.clientHeight >= parseInt(value, 10);
+  },
+
+  _hasMaxHeight(value) {
+    return this.element.clientHeight <= parseInt(value, 10);
+  },
+
+  _hasMinWidth(value) {
+    return this.element.clientWidth >= parseInt(value, 10);
+  },
+
+  _hasMaxWidth(value) {
+    return this.element.clientWidth <= parseInt(value, 10);
   }
 });
