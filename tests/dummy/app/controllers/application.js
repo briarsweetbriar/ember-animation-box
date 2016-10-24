@@ -13,7 +13,7 @@ export default Controller.extend({
     const _this = this;
 
     return Ember.A([{
-      duration: 5000,
+      duration: 500,
       effect: {
         '@media (min-width: 500px)': {
           translateX: '100px'
@@ -26,13 +26,13 @@ export default Controller.extend({
           set(_this, 'text', 'I am new text!!!');
         },
         in: {
-          duration: 1000,
+          duration: 100,
           effect: {
             opacity: 1
           }
         },
         out: {
-          duration: 1500,
+          duration: 150,
           effect: {
             opacity: 0
           }
@@ -40,7 +40,7 @@ export default Controller.extend({
       }
     }, {
       external: {
-        duration: 1000
+        duration: 100
       }
     }, {
       crossFade: {
@@ -48,13 +48,13 @@ export default Controller.extend({
           set(_this, 'text', 'I am newer text!!!');
         },
         in: {
-          duration: 1000,
+          duration: 100,
           effect: {
             opacity: 1
           }
         },
         out: {
-          duration: 1500,
+          duration: 150,
           effect: {
             opacity: 0
           }
@@ -66,20 +66,20 @@ export default Controller.extend({
           set(_this, 'text', 'I am newest text!!!');
         },
         in: {
-          duration: 1000,
+          duration: 100,
           effect: {
             opacity: 1
           }
         },
         out: {
-          duration: 1500,
+          duration: 150,
           effect: {
             opacity: 0
           }
         }
       }
     }, {
-      duration: 500,
+      duration: 50,
       effect: {
         translateY: '100px'
       }

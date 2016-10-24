@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import layout from '../templates/components/ember-animation-box';
 import { task, timeout } from 'ember-concurrency';
+import ResizeAware from 'ember-resize/mixins/resize-aware';
 
 const {
   Component,
@@ -25,16 +26,38 @@ const {
   }
 } = Ember;
 
+const { inject: { service } } = Ember;
+
 const activeInstanceClass = 'ember-animation-box-active-instance';
 
-export default Component.extend({
+export default Component.extend(ResizeAware, {
   layout,
   hook: 'ember_animation_box',
 
   isInstant: false,
+  resizeEventsEnabled: false,
   transitions: [],
 
+  resizeService: service('resize'),
+
+  _history: computed(() => Ember.A()),
   _transitionQueue: computed(() => Ember.A()),
+
+  didResize() {
+    this._handleResize();
+  },
+
+  debouncedDidResize() {
+    this._handleResize();
+  },
+
+  _handleResize() {
+    const effect = get(this, '_history').reduce((accumulator, transition) => {
+      return assign(accumulator, this._generateEffect(get(transition, 'effect') || {}));
+    }, {});
+
+    this._performAnimation(this.element, { effect, duration: 0, clear: true });
+  },
 
   animator: computed('animationAdapter', {
     get() {
@@ -52,9 +75,11 @@ export default Component.extend({
 
   _queueTransitions() {
     const queue = get(this, '_transitionQueue');
+    const history = get(this, '_history');
     const transitions = get(this, 'transitions');
 
     queue.pushObjects(transitions);
+    history.pushObjects(transitions);
 
     transitions.length = 0;
   },
