@@ -52,11 +52,20 @@ export default Component.extend(ResizeAware, {
   },
 
   _handleResize() {
-    const effect = get(this, '_history').reduce((accumulator, transition) => {
-      return assign(accumulator, this._generateEffect(get(transition, 'effect') || {}));
+    const accumulator = get(this, '_history').reduce((accumulator, transition) => {
+      const selector = get(transition, 'element') || '_main';
+      const selectorAccumulator = get(accumulator, selector) || set(accumulator, selector, {});
+
+      assign(selectorAccumulator, this._generateEffect(get(transition, 'effect') || {}));
+
+      return accumulator;
     }, {});
 
-    this._performAnimation(this.element, { effect, duration: 0, clear: true });
+    Object.keys(accumulator).forEach((key) => {
+      const element = key === '_main' ? this.element : this.$(key).get(0);
+
+      this._performAnimation(element, { effect: accumulator[key], duration: 0, clear: true });
+    });
   },
 
   animator: computed('animationAdapter', {
