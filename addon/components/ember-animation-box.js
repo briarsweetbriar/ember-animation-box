@@ -172,11 +172,11 @@ export default Component.extend(ResizeAware, {
 
     const inPromise = this._performAnimation($active.get(0), transitionIn);
 
-    Ember.run.next(() => {
+    Ember.run.later(() => {
       // restore dimensions, hopefully before a visual bug x_x
       $active.css('height', '');
       $active.css('width', '');
-    });
+    }, 25);
 
     return all([outPromise, inPromise]);
   },
