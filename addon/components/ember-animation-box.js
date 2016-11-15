@@ -162,21 +162,11 @@ export default Component.extend(ResizeAware, {
 
     $active.css({ opacity: 0 });
 
-    // prevent dimensions from collapsing during transition
-    $active.height($active.height());
-    $active.width($active.width());
-
     if (typeOf(cb) === 'function') {
       cb();
     }
 
     const inPromise = this._performAnimation($active.get(0), transitionIn);
-
-    Ember.run.later(() => {
-      // restore dimensions, hopefully before a visual bug x_x
-      $active.css('height', '');
-      $active.css('width', '');
-    }, 25);
 
     return all([outPromise, inPromise]);
   },
