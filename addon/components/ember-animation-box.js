@@ -150,21 +150,31 @@ export default Component.extend(ResizeAware, {
     const transitionIn = get(transition, 'crossFade.in');
     const transitionOut = get(transition, 'crossFade.out');
 
+    if (isNone(get(transitionIn, 'easing'))) {
+      set(transitionIn, 'easing', get(this, 'animator.easingIn'));
+    }
+
+    if (isNone(get(transitionOut, 'easing'))) {
+      set(transitionOut, 'easing', get(this, 'animator.easingOut'));
+    }
+
+    if (isNone(get(transitionOut, 'duration'))) {
+      set(transitionOut, 'duration', get(transitionIn, 'duration') * 2.5);
+    }
+
     if (!get(transitionOut, 'static')) {
       $clone.css({ position: 'absolute', top: 0, left: 0 });
     }
 
-    $active.before($clone);
-
-    const outPromise = this._performAnimation($clone.get(0), transitionOut).then(() => {
-      $clone.remove();
-    });
-
-    $active.css({ opacity: 0 });
+    $active.before($clone).css({ opacity: 0 });
 
     if (typeOf(cb) === 'function') {
       cb();
     }
+
+    const outPromise = this._performAnimation($clone.get(0), transitionOut).then(() => {
+      $clone.remove();
+    });
 
     const inPromise = this._performAnimation($active.get(0), transitionIn);
 

@@ -8,6 +8,9 @@ const {
 const { RSVP: { resolve } } = Ember;
 
 export default Ember.Object.extend({
+  easingIn: 'easeOutSine',
+  easingOut: 'easeInSine',
+
   animate(element, effect, options) {
     let finalEffect = effect;
 
