@@ -159,7 +159,7 @@ export default Component.extend(ResizeAware, {
     }
 
     if (isNone(get(transitionOut, 'duration'))) {
-      set(transitionOut, 'duration', get(transitionIn, 'duration') * 2.5);
+      set(transitionOut, 'duration', get(transitionIn, 'duration'));
     }
 
     if (!get(transitionOut, 'static')) {
