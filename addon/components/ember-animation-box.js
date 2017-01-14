@@ -78,10 +78,12 @@ export default Component.extend(ResizeAware, {
     const history = get(this, '_history');
     const transitions = get(this, 'transitions');
 
-    queue.pushObjects(transitions);
-    history.pushObjects(transitions);
+    if (transitions) {
+      queue.pushObjects(transitions);
+      history.pushObjects(transitions);
 
-    transitions.length = 0;
+      transitions.length = 0;
+    }
   },
 
   _mainQueueTask: task(function * () {
