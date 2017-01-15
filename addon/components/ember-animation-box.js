@@ -152,6 +152,15 @@ export default Component.extend(ResizeAware, {
     const transitionIn = get(transition, 'crossFade.in');
     const transitionOut = get(transition, 'crossFade.out');
 
+    const activeCanvases = [];
+    $active.find('canvas').each(function() {
+      activeCanvases.push(this);
+    });
+
+    $clone.find('canvas').each(function(index) {
+      this.getContext('2d').drawImage(activeCanvases[index], 0, 0);
+    });
+
     if (isNone(get(transitionIn, 'easing'))) {
       set(transitionIn, 'easing', get(this, 'animator.easingIn'));
     }
