@@ -24,8 +24,6 @@ export default Ember.Object.extend({
       if (element.style.transform.includes('translateZ')) {
         finalEffect = assign({ translateZ: 0 }, finalEffect);
       }
-
-      element.removeAttribute('style');
     }
 
     if (Object.keys(finalEffect).length === 0) { return resolve(); }
