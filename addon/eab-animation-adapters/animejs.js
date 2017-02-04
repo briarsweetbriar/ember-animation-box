@@ -40,6 +40,7 @@ export default Ember.Object.extend({
     }
 
     if (!options.easing) { options.easing = 'easeInOutSine'; }
+    if (options.duration === 0) { options.duration = 1; }
 
     return new Promise((resolve) => {
       anime({
