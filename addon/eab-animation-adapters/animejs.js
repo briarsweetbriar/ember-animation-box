@@ -6,7 +6,9 @@ const {
   assign,
   computed,
   get,
-  set
+  isPresent,
+  set,
+  typeOf
 } = Ember;
 
 const { RSVP: { Promise, resolve } } = Ember;
@@ -24,19 +26,15 @@ export default Ember.Object.extend({
       const transformMapping = get(this, 'transformMapping');
       let elementMap = transformMapping.get(element);
       if (!elementMap) { elementMap = {}; transformMapping.set(element, elementMap); }
-      const transforms = [
-        'translateX', 'translateY', 'translateZ',
-        'rotateX', 'rotateY', 'rotateZ',
-        'scaleX', 'scaleY', 'scaleZ',
-        'skewX', 'skewY', 'skewZ'
-      ].reduce((transforms, transform) => {
-        if (elementMap[transform]) { transforms[transform] = elementMap[transform]; }
-        if (effect[transform]) { elementMap[transform] = effect[transform]; }
 
-        return transforms;
-      }, {});
+      Object.keys(elementMap).forEach((key) => {
+        const current = typeOf(elementMap[key]) === 'array' ? elementMap[key][1] : elementMap[key];
+        const next = isPresent(effect[key]) ? effect[key] : current;
 
-      effect = assign(transforms, effect);
+        effect[key] = [current, next];
+      });
+
+      assign(elementMap, effect);
     }
 
     if (!options.easing) { options.easing = 'easeInOutSine'; }
