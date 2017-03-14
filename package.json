@@ -1,6 +1,6 @@
 {
   "name": "ember-animation-box",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A scriptable animation box for Ember.js",
   "directories": {
     "doc": "doc",

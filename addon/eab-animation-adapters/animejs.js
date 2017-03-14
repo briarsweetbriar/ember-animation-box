@@ -14,8 +14,8 @@ const {
 const { RSVP: { Promise, resolve } } = Ember;
 
 export default Ember.Object.extend({
-  easingIn: 'easeOutSine',
-  easingOut: 'easeInExpo',
+  easingIn: 'easeInOut',
+  easingOut: 'easeInOut',
 
   transformMapping: computed(() => new Map()),
 
