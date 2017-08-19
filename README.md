@@ -78,3 +78,17 @@ If the `transition` contains a `crossFade` object, then it'll clone the current 
 ```
 
 To get a simple delay before the next transition, provide a transition without an `effect` or `crossFade` object.
+
+### AnimatableMixin
+
+Alternatively, you can apply the `AnimatableMixin` directly to a component, which will make it expose the same API as the `ember-animation-box`. The one limitation of this approach is that it cannot crossfade:
+
+```js
+import Ember from 'ember';
+import { AnimatableMixin } from 'ember-animation-box';
+
+export default Ember.Component.extend(AnimatableMixin, {
+  . . . .
+});
+
+```

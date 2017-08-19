@@ -194,7 +194,7 @@ test('content can be cross faded in', function(assert) {
   }]));
 
   this.render(hbs`
-    {{#ember-animation-box transitions=transitions animationAdapter="velocity"}}
+    {{#ember-animation-box transitions=transitions animator="velocity"}}
       <div data-test={{hook "test_div"}}></div>
     {{/ember-animation-box}}
   `);
@@ -234,7 +234,7 @@ test('`in` callback is executed when crossFading', function(assert) {
   this.set('transitions', Ember.A([{ crossFade }]));
 
   this.render(hbs`
-    {{#ember-animation-box transitions=transitions animationAdapter="velocity"}}
+    {{#ember-animation-box transitions=transitions animator="velocity"}}
       <div data-test={{hook "test_div"}}></div>
     {{/ember-animation-box}}
   `);
@@ -255,7 +255,7 @@ test('`externalAction` called when external', function(assert) {
   this.set('transitions', Ember.A([{ external }]));
 
   this.render(hbs`
-    {{#ember-animation-box transitions=transitions animationAdapter="velocity" externalAction=(action externalAction)}}
+    {{#ember-animation-box transitions=transitions animator="velocity" externalAction=(action externalAction)}}
       <div data-test={{hook "test_div"}}></div>
     {{/ember-animation-box}}
   `);
