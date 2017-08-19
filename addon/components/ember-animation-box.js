@@ -242,18 +242,18 @@ export default Component.extend(ResizeAware, {
   },
 
   _hasMinHeight(value) {
-    return window.innerHeight >= parseInt(value, 10);
+    return this.element.clientHeight >= parseInt(value, 10);
   },
 
   _hasMaxHeight(value) {
-    return window.innerHeight <= parseInt(value, 10);
+    return this.element.clientHeight <= parseInt(value, 10);
   },
 
   _hasMinWidth(value) {
-    return window.innerWidth >= parseInt(value, 10);
+    return this.element.clientWidth >= parseInt(value, 10);
   },
 
   _hasMaxWidth(value) {
-    return window.innerWidth <= parseInt(value, 10);
+    return this.element.clientWidth <= parseInt(value, 10);
   }
 });

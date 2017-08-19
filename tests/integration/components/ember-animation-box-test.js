@@ -86,7 +86,10 @@ test('it can receive media queries', function(assert) {
     '@media (max-width: 50px)': { opacity: 0.8 }
   } }]));
 
+    Ember.run.later(() => {
   assert.equal(parseFloat(this.$(hook('ember_animation_box')).css('opacity')).toFixed(1), 0.4, 'transition executed');
+
+}, 1)
 });
 
 test('it can receive multiple media queries', function(assert) {

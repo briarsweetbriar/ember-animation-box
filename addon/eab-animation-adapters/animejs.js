@@ -3,6 +3,7 @@ import Ember from 'ember';
 import anime from 'ember-animejs';
 
 const {
+  Promise,
   assign,
   computed,
   get,
@@ -10,8 +11,6 @@ const {
   set,
   typeOf
 } = Ember;
-
-const { RSVP: { Promise, resolve } } = Ember;
 
 export default Ember.Object.extend({
   easingIn: 'easeInOut',
@@ -41,12 +40,10 @@ export default Ember.Object.extend({
     if (options.duration === 0) { options.duration = 1; }
 
     return new Promise((resolve) => {
-      anime({
+      anime(assign({
         targets: element,
-        complete: resolve,
-        ...options,
-        ...effect
-      });
+        complete: resolve
+      }, options, effect));
     });
   }
 });

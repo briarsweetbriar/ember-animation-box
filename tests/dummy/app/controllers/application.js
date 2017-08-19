@@ -90,7 +90,7 @@ export default Controller.extend({
     externalAction(transition, resolve) {
       Ember.run.later(() => {
         resolve();
-        console.log('external action complete');
+        console.log('external action complete'); // eslint-disable-line
       }, transition.duration);
     }
   }
