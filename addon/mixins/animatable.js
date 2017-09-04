@@ -60,7 +60,7 @@ export default Mixin.create(ResizeAware, {
     }
   }),
 
-  loadAndPerformQueue: on('init', observer('transitions.[]', function() {
+  loadAndPerformQueue: on('didInsertElement', observer('transitions.[]', function() {
     this._queueTransitions();
 
     get(this, '_mainQueueTask').perform();
@@ -144,7 +144,8 @@ export default Mixin.create(ResizeAware, {
     const selector = get(transition, 'element');
     const activeInstanceClass = get(this, '_activeInstanceClass');
     const activeInstanceSelector = activeInstanceClass ? `.${activeInstanceClass}` : '';
-    const element = this.$(isPresent(selector) ? `${activeInstanceSelector} ${selector}` : undefined).get(0);
+    const $element = this.$(isPresent(selector) ? `${activeInstanceSelector} ${selector}` : undefined);
+    const element = isPresent($element) ? $element.get(0) : this.element;
 
     return this._performAnimation(element, transition);
   },

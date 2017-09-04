@@ -3,7 +3,6 @@ import Ember from 'ember';
 import anime from 'ember-animejs';
 
 const {
-  Promise,
   assign,
   computed,
   get,
@@ -12,9 +11,11 @@ const {
   typeOf
 } = Ember;
 
+const { RSVP: { Promise } } = Ember;
+
 export default Ember.Object.extend({
-  easingIn: 'easeInOut',
-  easingOut: 'easeInOut',
+  easingIn: 'easeInOutSine',
+  easingOut: 'easeInOutSine',
 
   transformMapping: computed(() => new Map()),
 
