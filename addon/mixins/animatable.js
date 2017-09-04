@@ -75,7 +75,7 @@ export default Mixin.create(ResizeAware, {
       queue.pushObjects(transitions);
       history.pushObjects(transitions);
 
-      transitions.length = 0;
+      transitions.clear ? transitions.clear() : transitions.length = 0;
     }
   },
 
@@ -87,6 +87,8 @@ export default Mixin.create(ResizeAware, {
 
       if (typeOf(this.attrs.didCompleteQueue) === 'function') {
         this.attrs.didCompleteQueue();
+      } else if (typeOf(this.didCompleteQueue) === 'function') {
+        this.didCompleteQueue();
       }
     }
   }).keepLatest(),
