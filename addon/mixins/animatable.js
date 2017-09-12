@@ -175,7 +175,7 @@ export default Mixin.create(ResizeAware, {
       }
 
       return accumulator;
-    }, {});
+    }, get(container, 'default') || {});
   },
 
   _mediaQueryIsValid(string) {
@@ -192,19 +192,27 @@ export default Mixin.create(ResizeAware, {
     });
   },
 
+  _mediaElement: computed('mediaElementSelector', {
+    get() {
+      const mediaElementSelector = get(this, 'mediaElementSelector');
+
+      return mediaElementSelector ? this.$().closest(mediaElementSelector).get(0) || this.element : this.element;
+    }
+  }),
+
   _hasMinHeight(value) {
-    return this.element.clientHeight >= parseInt(value, 10);
+    return get(this, '_mediaElement').clientHeight >= parseInt(value, 10);
   },
 
   _hasMaxHeight(value) {
-    return this.element.clientHeight <= parseInt(value, 10);
+    return get(this, '_mediaElement').clientHeight <= parseInt(value, 10);
   },
 
   _hasMinWidth(value) {
-    return this.element.clientWidth >= parseInt(value, 10);
+    return get(this, '_mediaElement').clientWidth >= parseInt(value, 10);
   },
 
   _hasMaxWidth(value) {
-    return this.element.clientWidth <= parseInt(value, 10);
+    return get(this, '_mediaElement').clientWidth <= parseInt(value, 10);
   }
 });
