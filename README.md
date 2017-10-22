@@ -1,5 +1,5 @@
 [![npm version](https://badge.fury.io/js/ember-animation-box.svg)](https://badge.fury.io/js/ember-animation-box)
-[![Build Status](https://travis-ci.org/null-null-null/ember-animation-box.svg?branch=master)](https://travis-ci.org/null-null-null/ember-animation-box)
+[![Build Status](https://travis-ci.org/patience-tema-baron/ember-animation-box.svg?branch=master)](https://travis-ci.org/patience-tema-baron/ember-animation-box)
 
 # `ember-animation-box`
 
